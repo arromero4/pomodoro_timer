@@ -9,11 +9,23 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+        appBar: AppBar(
+          title: Text('My Flutter App'),
+          backgroundColor: Colors.blue,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                // Action for settings button
+              },
+            ),
+          ],
         ),
+        body: Center(child: Text('Hello World!')),
       ),
     );
   }
