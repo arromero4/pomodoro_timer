@@ -9,7 +9,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   Timer? _timer;
 
-  TimerBloc() : super(TimerState.initial(_defaultDuration)) {
+  TimerBloc() : super(TimerState.initial()) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
@@ -37,15 +37,41 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onReset(TimerReset event, Emitter<TimerState> emit) {
     _timer?.cancel();
-    emit(TimerState.initial(_defaultDuration));
+    emit(TimerState.initial());
   }
 
   void _onTicked(TimerTicked event, Emitter<TimerState> emit) {
-    if (event.duration <= 0) {
-      _timer?.cancel();
-      emit(state.copyWith(duration: 0, status: TimerStats.finished));
-    } else {
+    if (event.duration > 0) {
       emit(state.copyWith(duration: event.duration));
+    } else {
+      _timer?.cancel();
+
+      //Calculate next session
+      final isWork = state.sessionType == PomodoroSessionType.work;
+      final completed = isWork
+          ? state.completedPomodoros! + 1
+          : state.completedPomodoros;
+
+      final nextSessionType = isWork
+          ? (completed! % 4 == 0
+                ? PomodoroSessionType.longBreak
+                : PomodoroSessionType.shortBreak)
+          : PomodoroSessionType.work;
+
+      final nextDuration = nextSessionType == PomodoroSessionType.work
+          ? _defaultDuration
+          : (nextSessionType == PomodoroSessionType.shortBreak
+                ? 5 * 60
+                : 15 * 60);
+
+      emit(
+        state.copyWith(
+          status: TimerStats.finished,
+          completedPomodoros: completed,
+          sessionType: nextSessionType,
+          duration: nextDuration,
+        ),
+      );
     }
   }
 

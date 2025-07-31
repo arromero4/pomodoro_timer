@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^9.1.1
   flutter_launcher_icons: ^0.14.4
+  cached_network_image: ^3.3.1  # para cargar GIFs remotamente
 
 dev_dependencies:
   flutter_test:

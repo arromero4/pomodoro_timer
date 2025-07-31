@@ -1,24 +1,50 @@
 import 'package:equatable/equatable.dart';
 
+enum PomodoroSessionType { work, shortBreak, longBreak }
+
 enum TimerStats { initial, running, paused, finished }
 
 class TimerState extends Equatable {
   final int duration;
   final TimerStats status;
+  final PomodoroSessionType? sessionType;
+  final int? completedPomodoros;
 
-  const TimerState({required this.duration, required this.status});
+  const TimerState({
+    required this.duration,
+    required this.status,
+    this.sessionType,
+    this.completedPomodoros,
+  });
 
-  factory TimerState.initial(int duration) {
-    return TimerState(duration: duration, status: TimerStats.initial);
+  factory TimerState.initial() {
+    return const TimerState(
+      duration: 25 * 60,
+      status: TimerStats.initial,
+      sessionType: PomodoroSessionType.work,
+      completedPomodoros: 0,
+    );
   }
 
-  TimerState copyWith({int? duration, TimerStats? status}) {
+  TimerState copyWith({
+    int? duration,
+    TimerStats? status,
+    PomodoroSessionType? sessionType,
+    int? completedPomodoros,
+  }) {
     return TimerState(
       duration: duration ?? this.duration,
       status: status ?? this.status,
+      sessionType: sessionType ?? this.sessionType,
+      completedPomodoros: completedPomodoros ?? this.completedPomodoros,
     );
   }
 
   @override
-  List<Object?> get props => [duration, status];
+  List<Object?> get props => [
+    duration,
+    status,
+    sessionType,
+    completedPomodoros,
+  ];
 }

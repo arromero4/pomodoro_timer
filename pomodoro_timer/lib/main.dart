@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pomodoro_timer/application/bloc/timer_bloc.dart';
+import 'package:pomodoro_timer/presentation/pages/home_page.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const PomodoroApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class PomodoroApp extends StatelessWidget {
+  const PomodoroApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('My Flutter App'),
-          backgroundColor: Colors.blue,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                // Action for settings button
-              },
-            ),
-          ],
+    return BlocProvider(
+      create: (context) => TimerBloc(),
+      child: MaterialApp(
+        title: 'Pomodoro Timer',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.black,
+            primary: Colors.blueAccent,
+            secondary: Colors.blue[300]!,
+          ),
+          useMaterial3: true,
         ),
-        body: Center(child: Text('Hello World!')),
+        home: const HomePage(),
       ),
     );
   }
