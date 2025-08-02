@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pomodoro_timer/application/bloc/timer_bloc.dart';
 import 'package:pomodoro_timer/application/bloc/timer_state.dart';
@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String _getGifForSession(PomodoroSessionType type) {
+    String getGifForSession(PomodoroSessionType type) {
       switch (type) {
         case PomodoroSessionType.work:
           return 'https://media.giphy.com/media/Vg0JstydL8HCg/giphy.gif'; // Charizard motivado
@@ -41,22 +41,41 @@ class HomePage extends StatelessWidget {
             final seconds = (state.duration % 60).toString().padLeft(2, '0');
             final double progress =
                 1.0 - (state.duration / (25 * 60)); //progress calculation
-            final String gifUrl = _getGifForSession(state.sessionType!);
+            final String gifUrl = getGifForSession(state.sessionType!);
+
+            final sessionText = switch (state.sessionType) {
+              PomodoroSessionType.work => "¡Hora de concentrarse!",
+              PomodoroSessionType.shortBreak => "Descanso corto",
+              PomodoroSessionType.longBreak => "Descanso largo",
+              // TODO: Handle this case.
+              null => throw UnimplementedError(),
+            };
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  sessionText,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                SizedBox(height: 20),
                 Stack(
                   alignment: Alignment.center,
                   children: [
                     ProgressRing(progress: progress),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TimerDisplay(time: '$minutes:$seconds'),
-                        const SizedBox(height: 60),
-                        CachedNetworkImage(imageUrl: gifUrl, height: 100),
-                      ],
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder: (child, animation) =>
+                          ScaleTransition(scale: animation, child: child),
+                      child: Column(
+                        key: ValueKey(state.sessionType),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TimerDisplay(time: '$minutes:$seconds'),
+                          const SizedBox(height: 60),
+                          CachedNetworkImage(imageUrl: gifUrl, height: 100),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 60),
                     ControlButtons(state: state),
