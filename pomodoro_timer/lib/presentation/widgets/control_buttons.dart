@@ -22,6 +22,11 @@ class ControlButtons extends StatelessWidget {
                 timerBloc.add(TimerStarted(duration: state.duration)),
             icon: const Icon(Icons.play_arrow),
             label: const Text('Start'),
+
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Colors.white,
+            ),
           ),
         if (state.status == TimerStats.running)
           ElevatedButton.icon(

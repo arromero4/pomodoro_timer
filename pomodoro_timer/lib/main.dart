@@ -23,6 +23,7 @@ class PomodoroApp extends StatelessWidget {
             primary: Colors.blueAccent,
             secondary: Colors.blue[300]!,
           ),
+
           useMaterial3: true,
         ),
         home: const HomePage(),

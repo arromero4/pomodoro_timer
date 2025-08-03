@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
             final seconds = (state.duration % 60).toString().padLeft(2, '0');
             final double progress =
                 1.0 - (state.duration / (25 * 60)); //progress calculation
-            final String gifUrl = getGifForSession(state.sessionType!);
+            // final String gifUrl = getGifForSession(state.sessionType!);
 
             final sessionText = switch (state.sessionType) {
               PomodoroSessionType.work => "¡Hora de concentrarse!",
@@ -51,35 +51,68 @@ class HomePage extends StatelessWidget {
               null => throw UnimplementedError(),
             };
 
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            return Stack(
+              fit: StackFit.expand,
               children: [
-                Text(
-                  sessionText,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                SizedBox(height: 20),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ProgressRing(progress: progress),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      transitionBuilder: (child, animation) =>
-                          ScaleTransition(scale: animation, child: child),
-                      child: Column(
-                        key: ValueKey(state.sessionType),
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TimerDisplay(time: '$minutes:$seconds'),
-                          const SizedBox(height: 60),
-                          CachedNetworkImage(imageUrl: gifUrl, height: 100),
-                        ],
+                // 🧊 Capa translúcida para visibilidad
+
+                //Contenido UI
+                // 📦 Dentro del Stack final del body:
+                SingleChildScrollView(
+                  child: SafeArea(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: 500, // opcional para pantallas grandes
+                          maxHeight: MediaQuery.of(context).size.height,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                sessionText,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 20),
+                              TimerDisplay(time: '$minutes:$seconds'),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ProgressRing(progress: progress),
+                                  if (state.backgroundImageUrl != null)
+                                    AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 500,
+                                      ),
+                                      child: Transform.scale(
+                                        scale:
+                                            4, // Puedes ajustar esto al gusto
+                                        child: Image.network(
+                                          state.backgroundImageUrl!,
+                                          key: ValueKey(
+                                            state.backgroundImageUrl,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Container(color: Colors.white),
+                                ],
+                              ),
+
+                              const SizedBox(height: 32),
+
+                              ControlButtons(state: state),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 60),
-                    ControlButtons(state: state),
-                  ],
+                  ),
                 ),
               ],
             );

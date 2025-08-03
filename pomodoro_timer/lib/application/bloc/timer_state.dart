@@ -9,12 +9,14 @@ class TimerState extends Equatable {
   final TimerStats status;
   final PomodoroSessionType? sessionType;
   final int? completedPomodoros;
+  final String? backgroundImageUrl;
 
   const TimerState({
     required this.duration,
     required this.status,
     this.sessionType,
     this.completedPomodoros,
+    this.backgroundImageUrl,
   });
 
   factory TimerState.initial() {
@@ -31,12 +33,14 @@ class TimerState extends Equatable {
     TimerStats? status,
     PomodoroSessionType? sessionType,
     int? completedPomodoros,
+    String? backgroundImageUrl,
   }) {
     return TimerState(
       duration: duration ?? this.duration,
       status: status ?? this.status,
       sessionType: sessionType ?? this.sessionType,
       completedPomodoros: completedPomodoros ?? this.completedPomodoros,
+      backgroundImageUrl: backgroundImageUrl ?? this.backgroundImageUrl,
     );
   }
 
